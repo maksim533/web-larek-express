@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import cron from 'node-cron';
 import ms from 'ms';
+import logger from '../middleware/logger';
 
 const TEMP_DIR = `public/${process.env.UPLOAD_PATH_TEMP || 'temp'}/`;
 
@@ -33,11 +34,11 @@ const cleanupTempFiles = () => {
           fs.unlinkSync(filePath);
         }
       } catch (fileError) {
-        console.error('Ошибка при удалении', fileError);
+        logger.consoleLogger.info('Ошибка при удалении файла', fileError);
       }
     });
   } catch (error) {
-    console.error('Критическая ошибка при очистке:', error);
+    logger.consoleLogger.info('Критическая ошибка при удалении файла', error);
   }
 };
 

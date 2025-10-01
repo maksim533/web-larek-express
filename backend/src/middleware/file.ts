@@ -1,8 +1,7 @@
-// middlewares/file.ts
 import multer from 'multer';
 import path from 'path';
 import { Request, Express } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import fs from 'fs';
 import BadRequestError from '../errors/bad-request-error';
 
@@ -18,7 +17,7 @@ const storage = multer.diskStorage({
   },
   filename: (_req: Request, file: Express.Multer.File, cb) => {
     const fileExt = path.extname(file.originalname);
-    const fileName = `${uuidv4()}${fileExt}`;
+    const fileName = `${randomUUID()}${fileExt}`;
     cb(null, fileName);
   },
 });

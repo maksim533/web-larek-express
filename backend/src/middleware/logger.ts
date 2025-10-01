@@ -20,6 +20,19 @@ const logger = {
     format: winston.format.json(),
     meta: true,
   }),
+
+  consoleLogger: winston.createLogger({
+    transports: [
+      new winston.transports.Console({
+        handleExceptions: true,
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.timestamp(),
+          winston.format.simple(),
+        ),
+      }),
+    ],
+  }),
 };
 
 export default logger;

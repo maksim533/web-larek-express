@@ -16,7 +16,7 @@ import './utils/clenupTemp';
 
 dotenv.config();
 const { PORT } = process.env || 3000;
-const { ORIGIN_ALLOW } = process.env;
+const { ORIGIN_ALLOW } = process.env || 'http://localhost:5173';
 const app = express();
 app.use(logger.requestLogger);
 app.use(express.json());
@@ -45,5 +45,5 @@ app.use(logger.errorLogger);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log('Server listening on Port', PORT);
+  logger.consoleLogger.info('Server listening on Port', PORT);
 });

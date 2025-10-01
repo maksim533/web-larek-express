@@ -13,13 +13,13 @@ interface Tokens {
 const generateTokens = (payload: JwtPayload): Tokens => {
   const accessToken = jwt.sign(
     payload,
-    process.env.JWT_ACCESS_SECRET || 'some-secret-access-key',
+    process.env.JWT_ACCESS_SECRET as string,
     { expiresIn: '10m' },
   );
 
   const refreshToken = jwt.sign(
     payload,
-    process.env.JWT_REFRESH_SECRET || 'some-secret-refresh-key',
+    process.env.JWT_REFRESH_SECRET as string,
     { expiresIn: '7d' },
   );
 

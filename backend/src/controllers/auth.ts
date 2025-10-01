@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import ms from 'ms';
-import mongoose from 'mongoose';
+import mongoose, { Error as MongooseError } from 'mongoose';
 import BadRequestError from '../errors/bad-request-error';
 import User from '../models/user';
 import ConflictError from '../errors/conflict-error';
@@ -59,6 +59,9 @@ const userController = {
         accesToken: token.accessToken,
       });
     } catch (error) {
+      if (error instanceof MongooseError.ValidationError) {
+        return next(new BadRequestError(error.message));
+      }
       return next(error);
     }
   },
@@ -94,6 +97,9 @@ const userController = {
         accessToken: token.accessToken,
       });
     } catch (error) {
+      if (error instanceof MongooseError.ValidationError) {
+        return next(new BadRequestError(error.message));
+      }
       return next(error);
     }
   },
@@ -131,7 +137,7 @@ const userController = {
       const token = authorization.replace('Bearer ', '');
       let payload;
       try {
-        payload = jwt.verify(token, 'some-secret-access-key') as JwtPayload;
+        payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as JwtPayload;
       } catch (error) {
         return next(new UnauthorizedError('Неверный или просроченный токен'));
       }
@@ -162,7 +168,10 @@ const userController = {
       }
       let payload;
       try {
-        payload = jwt.verify(refreshToken, 'some-secret-refresh-key') as DecodedToken;
+        payload = jwt.verify(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET as string,
+        ) as DecodedToken;
       } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
           return next(new UnauthorizedError('Refresh token просрочен'));
